@@ -1,0 +1,58 @@
+flag manipulation instructions
+.model small
+.data
+msg db 0dh,0ah,"----------- OF DF IF TF SF ZF -- AF -- PF -- CF -----------",0dh,0ah,"$"
+new1 db 0dh,0ah,"$"
+flag dw ?
+
+.code
+start:
+    mov ax,@data
+    mov ds,ax
+
+    mov dx,offset msg
+    mov ah,09h
+    int 21h
+
+    mov dx,offset new1
+    mov ah,09h
+    int 21h
+
+    cli         ; Clear interrupt flag
+    stc         ; Set carry flag
+    std         ; Set direction flag
+
+    pushf       ; Push flags on stack
+    pop bx      ; Pop flags into BX
+    mov flag,bx
+
+    mov cx,16
+    mov bx,8000h    ; 1000 0000 0000 0000
+
+loops:
+    mov ax,flag
+    and ax,bx
+    jz zero
+
+    mov dl,31h      ; Print '1'
+    mov ah,02h
+    int 21h
+    jmp space
+
+zero:
+    mov dl,30h      ; Print '0'
+    mov ah,02h
+    int 21h
+
+space:
+    mov dl,'.'
+    mov ah,02h
+    int 21h
+
+    ror bx,1        ; Rotate BX right by 1
+    loop loops
+
+    mov ah,4ch
+    int 21h
+
+end start
