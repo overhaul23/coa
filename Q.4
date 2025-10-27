@@ -1,0 +1,83 @@
+BCD addition
+.model small
+.stack 100h
+
+.data
+msg1 db 'Enter first BCD number (00-99): $'
+msg2 db 0dh,0ah,'Enter second BCD number (00-99): $'
+msg3 db 0dh,0ah,'Sum is: $'
+res db 3 dup('$')     ; two digits + '$'
+
+.code
+main:
+    mov ax, @data
+    mov ds, ax
+
+; ---------- First number ----------
+    lea dx, msg1
+    call print
+    call read_bcd
+    mov bh, al          ; store first BCD in BH
+
+; ---------- Second number ----------
+    lea dx, msg2
+    call print
+    call read_bcd
+    add al, bh          ; add two BCD numbers
+    daa                 ; Decimal Adjust AL after addition
+    call bcd_to_ascii
+
+; ---------- Show result ----------
+    lea dx, msg3
+    call print
+    lea dx, res
+    call print
+
+; ---------- Exit ----------
+    mov ah, 4Ch
+    int 21h
+
+; ----------------- Subroutines -----------------
+
+; Print string at DS:DX
+print:
+    mov ah, 09h
+    int 21h
+    ret
+
+; Read 2 ASCII digits and convert to packed BCD in AL
+read_bcd:
+    ; Read 1st digit
+    mov ah, 01h
+    int 21h
+    sub al, '0'
+    mov cl, 4
+    shl al, cl
+    mov bl, al          ; upper nibble
+
+    ; Read 2nd digit
+    mov ah, 01h
+    int 21h
+    sub al, '0'
+    or bl, al           ; combine into packed BCD
+    mov al, bl
+    ret
+
+; Convert packed BCD in AL to 2 ASCII digits stored in res[]
+bcd_to_ascii:
+    mov ah, al
+    and ah, 0F0h
+    mov cl, 4
+    shr ah, cl
+    add ah, '0'
+    mov res, ah
+
+    mov ah, al
+    and ah, 0Fh
+    add ah, '0'
+    mov res+1, ah
+
+    mov byte ptr res+2, '$'
+    ret
+
+end main
