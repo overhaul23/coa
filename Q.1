@@ -1,0 +1,30 @@
+1. Implementation of various ALU operations (ADD, SUB, MUL, DIV, AND, OR, XOR, NOT)
+through assembly language programming for 8086 using MASM and Debug.
+.MODEL SMALL
+.STACK 100H
+.DATA
+num1 DW 10 num2 DW 5 result DW ? ; First operand
+; Second operand
+; Variable to store result
+.CODE
+MAIN PROC
+MOV AX, @DATA
+MOV DS, AX
+; ----------- ADD -----------
+MOV AX, num1
+ADD AX, num2
+MOV result, AX
+; ----------- SUB -----------
+MOV AX, num1
+SUB AX, num2
+MOV result, AX
+; ----------- AND -----------
+MOV AX, num1
+AND AX, num2
+MOV result, AX
+; Exit program
+MOV AH, 4CH
+INT 21H
+MAIN ENDP
+END MAIN
+(Not complet
