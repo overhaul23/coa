@@ -3,28 +3,53 @@ through assembly language programming for 8086 using MASM and Debug.
 .MODEL SMALL
 .STACK 100H
 .DATA
-num1 DW 10 num2 DW 5 result DW ? ; First operand
-; Second operand
-; Variable to store result
+num1 DB 4       ; First operand
+num2 DB 2       ; Second operand
+
 .CODE
 MAIN PROC
-MOV AX, @DATA
-MOV DS, AX
-; ----------- ADD -----------
-MOV AX, num1
-ADD AX, num2
-MOV result, AX
-; ----------- SUB -----------
-MOV AX, num1
-SUB AX, num2
-MOV result, AX
-; ----------- AND -----------
-MOV AX, num1
-AND AX, num2
-MOV result, AX
+    MOV AX, @DATA
+    MOV DS, AX
+
+; ---------- ADD ----------
+    MOV AL, num1
+    ADD AL, num2
+
+; ---------- SUB ----------
+    MOV AL, num1
+    SUB AL, num2
+
+; ---------- MUL ----------
+    MOV AL, num1
+    MOV AH, 0
+    MOV BL, num2
+    MUL BL              ; AX = AL * BL
+
+; ---------- DIV ----------
+    MOV AL, num1
+    MOV BL, num2
+    XOR DX, DX          ; Clear DX before division
+    DIV BL              ; AL = AL / BL, remainder in AH
+
+; ---------- AND ----------
+    MOV AL, num1
+    AND AL, num2
+
+; ---------- OR ----------
+    MOV AL, num1
+    OR AL, num2
+
+; ---------- XOR ----------
+    MOV AL, num1
+    XOR AL, num2
+
+; ---------- NOT ----------
+    MOV AL, num1
+    NOT AL
+
 ; Exit program
-MOV AH, 4CH
-INT 21H
+    MOV AH, 4CH
+    INT 21H
+
 MAIN ENDP
 END MAIN
-(Not complet
